@@ -1,0 +1,5 @@
+server: master.example.com:2097
+token: your-agent-token-here
+singbox_path: sing-box
+config_dir: ./config
+log_level: info

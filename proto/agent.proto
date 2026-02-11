@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+option go_package = "github.com/seds-net/seds-agent/proto";
+
+package agent;
+
+// Agent service for bidirectional streaming
+service AgentService {
+  rpc Connect(stream AgentMessage) returns (stream ServerMessage);
+}
+
+// Messages from Agent to Server
+message AgentMessage {
+  oneof payload {
+    RegisterRequest register = 1;
+    Heartbeat heartbeat = 2;
+    SysStats sys_stats = 3;
+    SbStatus sb_status = 4;
+    CommandResult command_result = 5;
+  }
+}
+
+message RegisterRequest {
+  string token = 1;
+  string version = 2;
+}
+
+message Heartbeat {
+  int64 timestamp = 1;
+}
+
+message SysStats {
+  string cpu = 1;
+  string memory = 2;
+  string disk = 3;
+  string network = 4;
+  string uptime = 5;
+}
+
+message SbStatus {
+  bool running = 1;
+  int64 connections = 2;
+  int64 upload = 3;
+  int64 download = 4;
+}
+
+message CommandResult {
+  string command_id = 1;
+  bool success = 2;
+  string output = 3;
+  string error = 4;
+}
+
+// Messages from Server to Agent
+message ServerMessage {
+  oneof payload {
+    RegisterResponse register_response = 1;
+    PushConfig push_config = 2;
+    Command command = 3;
+  }
+}
+
+message RegisterResponse {
+  bool success = 1;
+  string message = 2;
+  uint32 node_id = 3;
+}
+
+message PushConfig {
+  string config_json = 1;
+  int64 version = 2;
+}
+
+message Command {
+  string command_id = 1;
+  string type = 2;
+  string payload = 3;
+}
